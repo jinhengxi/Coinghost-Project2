@@ -2,30 +2,29 @@ import { useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import ContorlBox from '../components/ControlBox';
 
-interface VideoTagProps {
-	src: string;
-	poster: string;
-	type: string;
-	muted: boolean;
-	autoPlay: boolean;
-	playsInline: boolean;
-	loop: boolean;
-}
 const Home = () => {
-	const [playVideo, setPlayVideo] = useState(false);
+	//재생여부
+	const [playing, setPlaying] = useState(false);
+	//현재 동영상 재생 시간
 	const [currentTime, setCurrentTime] = useState(0);
-	const [onControl, setOnControl] = useState(false);
+	//컨트롤박스 on/off
+	const [showControlBox, setShowControlBox] = useState(false);
 
 	const ref = useRef<HTMLVideoElement>(null);
+
+	const totalTime = (ref && ref.current && ref.current.duration) || 0;
+	const startTime = Math.floor(currentTime);
+
+	const videoElement = ref && ref.current;
 
 	const addTimeUpdate = () => {
 		const observedVideoElement = ref && ref.current;
 		if (observedVideoElement) {
-			observedVideoElement.addEventListener('timeupdate', function () {
+			observedVideoElement.addEventListener('timeupdate', () => {
 				setCurrentTime(observedVideoElement.currentTime);
 			});
 			// 컴포넌트가 처음 마운트 될 때 동영상 시작 할지 말지 여부
-			setPlayVideo(true);
+			setPlaying(true);
 			observedVideoElement.play();
 		}
 	};
@@ -34,33 +33,77 @@ const Home = () => {
 		addTimeUpdate();
 	}, []);
 
+	// progress 이동시켰을때 실행되는 함수
+	const onProgressChange = (percent: number) => {
+		if (videoElement) {
+			const playingTime = videoElement.duration * (percent / 100);
+			videoElement.currentTime = playingTime
+			setCurrentTime(playingTime);
+		}
+	};
+
 	const handleControlVisible = () => {
-		if (!onControl) {
-			setOnControl(true);
+		if (!showControlBox) {
+			setShowControlBox(true);
 			setTimeout(() => {
-				setOnControl(false);
+				setShowControlBox(false);
 			}, 3000);
+		}
+	};
+
+	const handlePlaying = () => {
+		if (playing) {
+			setPlaying(false);
+			videoElement?.pause();
+		} else {
+			setPlaying(true);
+			videoElement?.play();
+		}
+	};
+
+	const fastForward = () => {
+		if(videoElement){
+			videoElement.currentTime = currentTime + 5
+			setCurrentTime(currentTime + 5);
+		}
+	};
+
+	const revert = () => {
+		if(videoElement){
+			videoElement.currentTime = currentTime - 5
+			setCurrentTime(currentTime - 5);
 		}
 	};
 
 	return (
 		<Container>
-      <Position>
-			<video
-				loop={true}
-				muted={true}
-				ref={ref}
-				playsInline={true}
-        onMouseMove={handleControlVisible}
-				// controls
-			>
-				<source
-					src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-					type="video/mp4"
+				<button onClick={revert}>sdada</button>
+			<Position>
+				<video
+					loop={true}
+					muted={true}
+					ref={ref}
+					playsInline={true}
+					onMouseMove={handleControlVisible}
+					// controls
+				>
+					<source
+						src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+						type="video/mp4"
+					/>
+				</video>
+				<ContorlBox
+					onProgressChange={onProgressChange}
+					showControlBox={showControlBox}
+					currentTime={currentTime}
+					playing={playing}
+					startTime={startTime}
+					totalTime={totalTime}
+					videoElement={videoElement}
+					handlePlaying={handlePlaying}
 				/>
-			</video>
-			<ContorlBox onControl={onControl} currentTime={currentTime} playVideo={playVideo}/>
-      </Position>
+			</Position>
+			<button onClick={fastForward}>sdada</button>
 		</Container>
 	);
 };
@@ -68,12 +111,12 @@ const Home = () => {
 export default Home;
 
 const Container = styled.main`
-  display: flex;
+	display: flex;
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
 `;
 
 const Position = styled.div`
-    position: relative;
-`
+	position: relative;
+`;
