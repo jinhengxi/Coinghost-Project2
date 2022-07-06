@@ -3,12 +3,10 @@ import styled from 'styled-components';
 import ContorlBox from '../components/ControlBox';
 
 const Home = () => {
-	//재생여부
 	const [playing, setPlaying] = useState(false);
-	//현재 동영상 재생 시간
 	const [currentTime, setCurrentTime] = useState(0);
-	//컨트롤박스 on/off
 	const [showControlBox, setShowControlBox] = useState(false);
+	const [fullScreen, setFullScreen] = useState(false);
 
 	const ref = useRef<HTMLVideoElement>(null);
 	const totalTime = (ref && ref.current && ref.current.duration) || 0;
@@ -57,8 +55,12 @@ const Home = () => {
 		}
 	};
 
-	videoElement?.addEventListener('keydown',(e)=>{
-		if (e.code === "Space") {
+	const handleFullScreen = () => {
+		setFullScreen(!fullScreen);
+	};
+
+	videoElement?.addEventListener('keydown', (e) => {
+		if (e.code === 'Space') {
 			handlePlaying();
 		}
 		if (e.code === 'ArrowRight' && videoElement) {
@@ -69,7 +71,7 @@ const Home = () => {
 			videoElement.currentTime = currentTime - 5;
 			setCurrentTime(currentTime - 5);
 		}
-	})
+	});
 
 	// const handleKeyPress = (e: { code: string }) => {
 	// 	if (e.code === "Space") {
@@ -86,14 +88,9 @@ const Home = () => {
 	// };
 
 	return (
-		<Container>
+		<Container isFullScreen={fullScreen}>
 			<Position onMouseMove={handleControlVisible}>
-				<video
-					loop={true}
-					muted={true}
-					ref={ref}
-					playsInline={true}
-				>
+				<video loop={true} muted={true} ref={ref} playsInline={true}>
 					<source
 						src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 						type="video/mp4"
@@ -108,6 +105,8 @@ const Home = () => {
 					totalTime={totalTime}
 					videoElement={videoElement}
 					handlePlaying={handlePlaying}
+					handleFullScreen={handleFullScreen}
+					isFullScreen={fullScreen}
 				/>
 			</Position>
 		</Container>
@@ -116,11 +115,17 @@ const Home = () => {
 
 export default Home;
 
-const Container = styled.main`
+const Container = styled.main<{ isFullScreen: boolean }>`
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
+
+	video {
+		width: ${({ isFullScreen }) => (isFullScreen && '100vw')};
+		height: ${({ isFullScreen }) => (isFullScreen && '100vh')};
+		object-fit: ${({ isFullScreen }) => (isFullScreen && 'cover')};
+	}
 `;
 
 const Position = styled.div`
