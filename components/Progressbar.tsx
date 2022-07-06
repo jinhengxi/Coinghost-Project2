@@ -16,18 +16,18 @@ function Progressbar({
 	max,
 }: Props) {
 	const percentNum = (value / max || 0) * 100;
+	const percent = `${percentNum}%`;
 	return (
 		<ProgressBarBox>
-			<Prebar percentNum={percentNum}>
+			<Prebar style={{width: percent}}>
 				<ProgressBar
 					onChange={(e) => onProgressChange(parseInt(e.target.value, 10))}
 					onMouseOver={onMouseUp}
 					onMouseLeave={onMouseDown}
-					value={percentNum}
 					type="range"
 					min="0"
 					max="100"
-					step="1"
+					value={percentNum}
 				/>
 			</Prebar>
 		</ProgressBarBox>
@@ -45,9 +45,8 @@ const ProgressBarBox = styled.div`
 	cursor: pointer;
 `;
 
-const Prebar = styled.div<{ percentNum: number }>`
+const Prebar = styled.div`
 	position: relative;
-	width: ${({ percentNum }) => percentNum}%;
 	height: 5px;
 	background-color: white;
 	border-radius: 3px;
@@ -73,3 +72,4 @@ const ProgressBar = styled.input`
 		background-color: white;
 	}
 `;
+

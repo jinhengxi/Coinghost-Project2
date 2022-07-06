@@ -36,7 +36,7 @@ const Home = () => {
 	// progress 이동시켰을때 실행되는 함수
 	const onProgressChange = (percent: number) => {
 		if (videoElement) {
-			const playingTime = videoElement.duration * (percent / 100);
+			const playingTime = (videoElement.duration /100) * percent
 			videoElement.currentTime = playingTime
 			setCurrentTime(playingTime);
 		}
