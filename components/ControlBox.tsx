@@ -10,7 +10,7 @@ import ProgressBar from '../components/Progressbar';
 import { useState } from 'react';
 
 interface IProps {
-	handleFullScreen : () => void;
+	handleFullScreen: () => void;
 	handlePlaying: () => void;
 	onProgressChange: (percent: number) => void;
 	showControlBox: boolean;
@@ -19,7 +19,7 @@ interface IProps {
 	startTime: number;
 	totalTime: number;
 	videoElement: HTMLVideoElement | null;
-	isFullScreen:boolean;
+	isFullScreen: boolean;
 }
 
 function ControlBox({
@@ -32,6 +32,7 @@ function ControlBox({
 	totalTime,
 	videoElement,
 	isFullScreen,
+	playing,
 }: IProps) {
 	const [volumeClicked, setVolumeClicked] = useState(0);
 	const [togglevolume, setTogglevolue] = useState(false);
@@ -51,7 +52,6 @@ function ControlBox({
 			const setVolume = value;
 			videoElement.volume = setVolume;
 			setVolumeClicked(setVolume);
-			console.log(setVolume);
 		}
 	};
 
@@ -61,13 +61,13 @@ function ControlBox({
 				videoElement.muted = true;
 			}
 			setTogglevolue(false);
-			setVolumeClicked(0)
+			setVolumeClicked(0);
 		} else {
 			if (videoElement) {
 				videoElement.muted = false;
 			}
 			setTogglevolue(true);
-			setVolumeClicked(1)
+			setVolumeClicked(1);
 		}
 	};
 
@@ -76,7 +76,7 @@ function ControlBox({
 			<ControlBar>
 				<PlayTime>
 					<span onClick={handlePlaying}>
-						{videoElement?.play ? <FaPause /> : <FaPlay />}
+						{playing ? <FaPause /> : <FaPlay />}
 					</span>
 					<TimeBox>
 						{toTimeString(startTime)}
@@ -94,12 +94,17 @@ function ControlBox({
 							value={volumeClicked}
 							onChange={(e) => handleVolume(+e.target.value)}
 						/>
-						{volumeClicked !== 0 ? <AiFillSound onClick={handleToggleVolume}/> : <FaVolumeMute onClick={handleToggleVolume}/>}
+						<span onClick={handleToggleVolume}>
+							{volumeClicked !== 0 ? <AiFillSound /> : <FaVolumeMute />}
+						</span>
 					</Sounds>
-					{
-						isFullScreen ?  <AiOutlineFullscreenExit  onClick={handleFullScreen}/> : <AiOutlineFullscreen onClick={handleFullScreen}/>
-					}
-						
+					<span onClick={handleFullScreen}>
+						{isFullScreen ? (
+							<AiOutlineFullscreenExit />
+						) : (
+							<AiOutlineFullscreen />
+						)}
+					</span>
 					<span>
 						<AiOutlineMore />
 					</span>
@@ -154,10 +159,25 @@ const TimeBox = styled.div`
 `;
 
 const Soundsbar = styled.input`
+	-webkit-appearance: none !important;
+	background: rgba(255, 255, 255, 0.5);
+	width: 100%;
+	height: 7px;
+	border-radius: 1.5px;
+	overflow: hidden;
+
+	&::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		width: 0px;
+		height: 3px;
+		box-shadow: -100vw 0 0 100vw white;
+		background-color: white;
+		border-radius: 50%;
+	}
+
 	margin-right: 10px;
 	display: none;
 	cursor: pointer;
-	overflow: hidden;
 `;
 
 const Sounds = styled.div`
@@ -165,6 +185,7 @@ const Sounds = styled.div`
 	align-items: center;
 	justify-content: center;
 	margin-right: 10px;
+	cursor: pointer;
 
 	&:hover {
 		${Soundsbar} {

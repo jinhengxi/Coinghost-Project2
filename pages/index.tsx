@@ -59,19 +59,19 @@ const Home = () => {
 		setFullScreen(!fullScreen);
 	};
 
-	videoElement?.addEventListener('keydown', (e) => {
-		if (e.code === 'Space') {
-			handlePlaying();
-		}
-		if (e.code === 'ArrowRight' && videoElement) {
-			videoElement.currentTime = currentTime + 5;
-			setCurrentTime(currentTime + 5);
-		}
-		if (e.code === 'ArrowLeft' && videoElement) {
-			videoElement.currentTime = currentTime - 5;
-			setCurrentTime(currentTime - 5);
-		}
-	});
+	// videoElement?.addEventListener('keydown', (e) => {
+	// 	if (e.code === 'Space') {
+	// 		handlePlaying();
+	// 	}
+	// 	if (e.code === 'ArrowRight' && videoElement) {
+	// 		videoElement.currentTime = currentTime + 5;
+	// 		setCurrentTime(currentTime + 5);
+	// 	}
+	// 	if (e.code === 'ArrowLeft' && videoElement) {
+	// 		videoElement.currentTime = currentTime - 5;
+	// 		setCurrentTime(currentTime - 5);
+	// 	}
+	// });
 
 	// const handleKeyPress = (e: { code: string }) => {
 	// 	if (e.code === "Space") {
@@ -89,7 +89,9 @@ const Home = () => {
 
 	return (
 		<Container isFullScreen={fullScreen}>
-			<Position onMouseMove={handleControlVisible}>
+			<Position onMouseMove={handleControlVisible} 
+			// tabIndex={0} onKeyDown={handleKeyPress}
+			>
 				<video loop={true} muted={true} ref={ref} playsInline={true}>
 					<source
 						src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
