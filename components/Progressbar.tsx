@@ -2,31 +2,25 @@ import styled from 'styled-components';
 
 interface Props {
 	onProgressChange: (progress: number) => void;
-	onMouseUp: () => void;
-	onMouseDown: () => void;
 	value: number;
 	max: number;
 }
 
 function Progressbar({
 	onProgressChange,
-	onMouseUp,
-	onMouseDown,
 	value,
 	max,
 }: Props) {
 	const percentNum = (value / max || 0) * 100;
-	const percent = `${percentNum}%`;
 	return (
 		<ProgressBarBox>
-			<Prebar style={{width: percent}}>
+			<Prebar>
 				<ProgressBar
-					onChange={(e) => onProgressChange(parseInt(e.target.value, 10))}
-					onMouseOver={onMouseUp}
-					onMouseLeave={onMouseDown}
+					onChange={(e) => onProgressChange(parseInt(e.target.value))}
 					type="range"
 					min="0"
 					max="100"
+					step="0.1"
 					value={percentNum}
 				/>
 			</Prebar>
@@ -37,39 +31,36 @@ function Progressbar({
 export default Progressbar;
 
 const ProgressBarBox = styled.div`
+	overflow: hidden;
+	height: 7px;
 	width: 95%;
-	height: 5px;
 	margin: 20px auto;
-	background-color: gray;
-	border-radius: 3px;
+	border-radius: 1.5px;
 	cursor: pointer;
 `;
 
 const Prebar = styled.div`
 	position: relative;
-	height: 5px;
-	background-color: white;
-	border-radius: 3px;
+	height: 7px;
+	border-radius: 1.5px;
 `;
 
 const ProgressBar = styled.input`
 	-webkit-appearance: none !important;
+	background: rgba(255, 255, 255, 0.2);
 	position: absolute;
-	top: 0px;
-	margin: 0;
+	top: -2px;
 	width: 100%;
-	height: 5px;
-	background-color: transparent;
+	height: 7px;
 	border-radius: 1.5px;
 	cursor: pointer;
-
+    
 	&::-webkit-slider-thumb {
-		-webkit-appearance: none !important;
-		width: 13px;
-		height: 13px;
-		border: solid 0.5px #e6e6e6;
-		border-radius: 50%;
+		-webkit-appearance: none;
+		cursor: pointer;
+		width: 5px;
+		box-shadow: -100vw 0 0 100vw white;
 		background-color: white;
+		border-radius: 50%;
 	}
 `;
-

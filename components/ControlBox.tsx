@@ -30,7 +30,7 @@ function ControlBox({
 	totalTime,
 	videoElement,
 }: IProps) {
-	const [volumeClicked, setVolumeClicked] = useState(false);
+	const [volumeClicked, setVolumeClicked] = useState(0);
 
 	const toTimeString = (second: number) => {
 		const date = new Date(second * 1000);
@@ -41,31 +41,13 @@ function ControlBox({
 		return formattedMinute + formattedSecond;
 	};
 
-	const onMouseUp = () => {
+	const handleVolume = (value: number) => {
 		if (videoElement) {
-			// controller를 옮긴 시점에 currentTime이 최신화 되지 않아, 이를 위해 수정
-			videoElement.currentTime = currentTime;
-			playing ? videoElement.play() : videoElement.pause();
-		}
-	};
-	// 마우스를 내렸을때 실행되는 함수
-	const onMouseDown = () => {
-		if (videoElement) {
-			videoElement.play();
-		}
-	};
-
-	const handleVolume = () => {
-		if (volumeClicked) {
-			if (videoElement) {
-				videoElement.muted = true;
-			}
-			setVolumeClicked(false);
-		} else {
-			if (videoElement) {
-				videoElement.muted = false;
-			}
-			setVolumeClicked(true);
+			videoElement.muted = false;
+			const setVolume = value;
+			videoElement.volume = setVolume;
+			setVolumeClicked(setVolume);
+			console.log(setVolume);
 		}
 	};
 
@@ -87,9 +69,17 @@ function ControlBox({
 					</TimeBox>
 				</PlayTime>
 				<IconBox>
-					<span onClick={handleVolume}>
-						{volumeClicked ? <AiFillSound /> : <FaVolumeMute />}
-					</span>
+					<Sounds>
+						<Soundsbar
+							type="range"
+							min="0"
+							max="1"
+							step="0.1"
+							value={volumeClicked}
+							onChange={(e) => handleVolume(+e.target.value)}
+						/>
+						{volumeClicked !== 0 ? <AiFillSound /> : <FaVolumeMute />}
+					</Sounds>
 					{/* <AiOutlineFullscreenExit/> */}
 					<span onClick={handleFullScreen}>
 						<AiOutlineFullscreen />
@@ -103,8 +93,6 @@ function ControlBox({
 				onProgressChange={onProgressChange}
 				max={totalTime}
 				value={currentTime}
-				onMouseUp={onMouseUp}
-				onMouseDown={onMouseDown}
 			/>
 		</Container>
 	);
@@ -149,7 +137,30 @@ const TimeBox = styled.div`
 	}
 `;
 
+const Soundsbar = styled.input`
+	margin-right: 10px;
+	display: none;
+	cursor: pointer;
+	overflow: hidden;
+`;
+
+const Sounds = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-right: 10px;
+
+	&:hover {
+		${Soundsbar} {
+			display: block;
+		}
+	}
+`;
+
 const IconBox = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	margin-right: 15px;
 	font-size: 20px;
 	color: white;

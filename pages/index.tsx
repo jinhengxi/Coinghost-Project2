@@ -11,10 +11,8 @@ const Home = () => {
 	const [showControlBox, setShowControlBox] = useState(false);
 
 	const ref = useRef<HTMLVideoElement>(null);
-
 	const totalTime = (ref && ref.current && ref.current.duration) || 0;
 	const startTime = Math.floor(currentTime);
-
 	const videoElement = ref && ref.current;
 
 	const addTimeUpdate = () => {
@@ -23,7 +21,6 @@ const Home = () => {
 			observedVideoElement.addEventListener('timeupdate', () => {
 				setCurrentTime(observedVideoElement.currentTime);
 			});
-			// 컴포넌트가 처음 마운트 될 때 동영상 시작 할지 말지 여부
 			setPlaying(true);
 			observedVideoElement.play();
 		}
@@ -33,11 +30,10 @@ const Home = () => {
 		addTimeUpdate();
 	}, []);
 
-	// progress 이동시켰을때 실행되는 함수
 	const onProgressChange = (percent: number) => {
 		if (videoElement) {
-			const playingTime = (videoElement.duration /100) * percent
-			videoElement.currentTime = playingTime
+			const playingTime = (videoElement.duration / 100) * percent;
+			videoElement.currentTime = playingTime;
 			setCurrentTime(playingTime);
 		}
 	};
@@ -61,31 +57,42 @@ const Home = () => {
 		}
 	};
 
-	const fastForward = () => {
-		if(videoElement){
-			videoElement.currentTime = currentTime + 5
+	videoElement?.addEventListener('keydown',(e)=>{
+		if (e.code === "Space") {
+			handlePlaying();
+		}
+		if (e.code === 'ArrowRight' && videoElement) {
+			videoElement.currentTime = currentTime + 5;
 			setCurrentTime(currentTime + 5);
 		}
-	};
-
-	const revert = () => {
-		if(videoElement){
-			videoElement.currentTime = currentTime - 5
+		if (e.code === 'ArrowLeft' && videoElement) {
+			videoElement.currentTime = currentTime - 5;
 			setCurrentTime(currentTime - 5);
 		}
-	};
+	})
+
+	// const handleKeyPress = (e: { code: string }) => {
+	// 	if (e.code === "Space") {
+	// 		handlePlaying();
+	// 	}
+	// 	if (e.code === 'ArrowRight' && videoElement) {
+	// 		videoElement.currentTime = currentTime + 5;
+	// 		setCurrentTime(currentTime + 5);
+	// 	}
+	// 	if (e.code === 'ArrowLeft' && videoElement) {
+	// 		videoElement.currentTime = currentTime - 5;
+	// 		setCurrentTime(currentTime - 5);
+	// 	}
+	// };
 
 	return (
 		<Container>
-				<button onClick={revert}>sdada</button>
-			<Position>
+			<Position onMouseMove={handleControlVisible}>
 				<video
 					loop={true}
 					muted={true}
 					ref={ref}
 					playsInline={true}
-					onMouseMove={handleControlVisible}
-					// controls
 				>
 					<source
 						src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
@@ -103,7 +110,6 @@ const Home = () => {
 					handlePlaying={handlePlaying}
 				/>
 			</Position>
-			<button onClick={fastForward}>sdada</button>
 		</Container>
 	);
 };
