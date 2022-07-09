@@ -16,7 +16,7 @@ function Progressbar({
 		<ProgressBarBox>
 			<Prebar>
 				<ProgressBar
-					onChange={(e) => onProgressChange(parseInt(e.target.value))}
+					onChange={(e) => onProgressChange(+e.target.value)}
 					type="range"
 					min="0"
 					max="100"

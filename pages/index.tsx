@@ -7,6 +7,7 @@ const Home = () => {
 	const [currentTime, setCurrentTime] = useState(0);
 	const [showControlBox, setShowControlBox] = useState(false);
 	const [fullScreen, setFullScreen] = useState(false);
+	const [VideoSrc, setVideoSrc] = useState('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')
 
 	const ref = useRef<HTMLVideoElement>(null);
 	const totalTime = (ref && ref.current && ref.current.duration) || 0;
@@ -23,6 +24,16 @@ const Home = () => {
 			observedVideoElement.play();
 		}
 	};
+
+
+	//기존 영상 멈추고 현재 플레이 시간 저장 / 새로운 영상 로드, 재생 / 끝난 거 확인 / 시간 넣어 다시 재생
+	// setTimeout(()=>{
+	// 	if(videoElement){
+	// 		setVideoSrc('https://ak.picdn.net/shutterstock/videos/1065170830/preview/stock-footage-nature-river-waterfall-forest-sun-morning-magical.webm')
+	// 		videoElement.load()
+	// 		videoElement.play()
+	// 	}
+	// },10000)
 
 	useEffect(() => {
 		addTimeUpdate();
@@ -59,42 +70,35 @@ const Home = () => {
 		setFullScreen(!fullScreen);
 	};
 
-	// videoElement?.addEventListener('keydown', (e) => {
-	// 	if (e.code === 'Space') {
-	// 		handlePlaying();
-	// 	}
-	// 	if (e.code === 'ArrowRight' && videoElement) {
-	// 		videoElement.currentTime = currentTime + 5;
-	// 		setCurrentTime(currentTime + 5);
-	// 	}
-	// 	if (e.code === 'ArrowLeft' && videoElement) {
-	// 		videoElement.currentTime = currentTime - 5;
-	// 		setCurrentTime(currentTime - 5);
-	// 	}
-	// });
+	const handleKeyPress = (e: { code: string }) => {
+		if (e.code === 'Space') {
+			handlePlaying();
+		}
+		if (e.code === 'ArrowRight' && videoElement) {
+			videoElement.currentTime = currentTime + 5;
+		}
+		if (e.code === 'ArrowLeft' && videoElement) {
+			videoElement.currentTime = currentTime - 5;
+		}
+	};
 
-	// const handleKeyPress = (e: { code: string }) => {
-	// 	if (e.code === "Space") {
-	// 		handlePlaying();
-	// 	}
-	// 	if (e.code === 'ArrowRight' && videoElement) {
-	// 		videoElement.currentTime = currentTime + 5;
-	// 		setCurrentTime(currentTime + 5);
-	// 	}
-	// 	if (e.code === 'ArrowLeft' && videoElement) {
-	// 		videoElement.currentTime = currentTime - 5;
-	// 		setCurrentTime(currentTime - 5);
-	// 	}
-	// };
+	const changeVideo = ()=>{
+		
+	}
 
 	return (
 		<Container isFullScreen={fullScreen}>
-			<Position onMouseMove={handleControlVisible} 
-			// tabIndex={0} onKeyDown={handleKeyPress}
-			>
-				<video loop={true} muted={true} ref={ref} playsInline={true}>
+			<Position onMouseMove={handleControlVisible}>
+				<video
+					loop={true}
+					muted={true}
+					ref={ref}
+					playsInline={true}
+					tabIndex={0}
+					onKeyDown={handleKeyPress}
+				>
 					<source
-						src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+						src={VideoSrc}
 						type="video/mp4"
 					/>
 				</video>
@@ -124,9 +128,10 @@ const Container = styled.main<{ isFullScreen: boolean }>`
 	height: 100vh;
 
 	video {
-		width: ${({ isFullScreen }) => (isFullScreen && '100vw')};
-		height: ${({ isFullScreen }) => (isFullScreen && '100vh')};
-		object-fit: ${({ isFullScreen }) => (isFullScreen && 'cover')};
+		width: ${({ isFullScreen }) => isFullScreen && '100vw'};
+		height: ${({ isFullScreen }) => isFullScreen && '100vh'};
+		object-fit: ${({ isFullScreen }) => isFullScreen && 'cover'};
+		outline: none;
 	}
 `;
 

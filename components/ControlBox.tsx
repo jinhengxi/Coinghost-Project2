@@ -126,7 +126,7 @@ const Container = styled.div<{ showControlBox: boolean }>`
 	bottom: 0;
 	width: 100%;
 	height: 10%;
-	background: linear-gradient(to bottom, rgba(80, 80, 80, 0), black);
+	background: linear-gradient(to bottom, rgba(100, 100, 100, 0), black);
 	transition: all 0.5s;
 	padding: 0px 10px;
 	/* opacity : ${({ showControlBox }) => (showControlBox ? '1' : '0')} */
@@ -137,13 +137,14 @@ const ControlBar = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	margin-top: 10px;
 `;
 
 const PlayTime = styled.div`
 	display: flex;
 	align-items: center;
 	color: white;
-	margin-left: 25px;
+	margin-left: 3%;
 
 	span {
 		cursor: pointer;
@@ -162,20 +163,19 @@ const Soundsbar = styled.input`
 	-webkit-appearance: none !important;
 	background: rgba(255, 255, 255, 0.5);
 	width: 100%;
-	height: 7px;
+	height: 5px;
 	border-radius: 1.5px;
 	overflow: hidden;
 
 	&::-webkit-slider-thumb {
 		-webkit-appearance: none;
 		width: 0px;
-		height: 3px;
+		height: 5px;
 		box-shadow: -100vw 0 0 100vw white;
 		background-color: white;
 		border-radius: 50%;
 	}
 
-	margin-right: 10px;
 	display: none;
 	cursor: pointer;
 `;
@@ -198,7 +198,7 @@ const IconBox = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin-right: 15px;
+	margin-right: 3%;
 	font-size: 20px;
 	color: white;
 
