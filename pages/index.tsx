@@ -10,9 +10,7 @@ const Home = () => {
 
 	const [ad, setAd] = useState(false);
 	const [pausedTime, setPausedTime] = useState(0);
-	const [src, setSrc] = useState(
-		'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-	);
+	const [src, setSrc] = useState(VideoSrc);
 
 	const ref = useRef<HTMLVideoElement>(null);
 	const totalTime = (ref && ref.current && ref.current.duration) || 0;
@@ -83,7 +81,8 @@ const Home = () => {
 				setPausedTime(videoElement.currentTime);
 				videoElement.pause();
 				setAd(true);
-			}if(videoElement?.ended){
+			}
+			if (videoElement?.ended) {
 				setSrc(`${VideoSrc}#t=${pausedTime}`);
 				videoElement.load();
 				videoElement.play();
@@ -136,10 +135,11 @@ const Container = styled.main<{ isFullScreen: boolean }>`
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
+	width: 100%;
 
 	video {
-		width: ${({ isFullScreen }) => isFullScreen && '100vw'};
-		height: ${({ isFullScreen }) => isFullScreen && '100vh'};
+		width: ${({ isFullScreen }) => (isFullScreen ? '100vw' : '70vw')};
+		height: ${({ isFullScreen }) => (isFullScreen ? '100vh' : '70vh')};
 		object-fit: ${({ isFullScreen }) => isFullScreen && 'cover'};
 		outline: none;
 	}
