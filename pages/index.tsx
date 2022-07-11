@@ -7,7 +7,12 @@ const Home = () => {
 	const [currentTime, setCurrentTime] = useState(0);
 	const [showControlBox, setShowControlBox] = useState(false);
 	const [fullScreen, setFullScreen] = useState(false);
-	const [VideoSrc, setVideoSrc] = useState('http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')
+
+	const [ad, setAd] = useState(false);
+	const [pausedTime, setPausedTime] = useState(0);
+	const [src, setSrc] = useState(
+		'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+	);
 
 	const ref = useRef<HTMLVideoElement>(null);
 	const totalTime = (ref && ref.current && ref.current.duration) || 0;
@@ -24,16 +29,6 @@ const Home = () => {
 			observedVideoElement.play();
 		}
 	};
-
-
-	//기존 영상 멈추고 현재 플레이 시간 저장 / 새로운 영상 로드, 재생 / 끝난 거 확인 / 시간 넣어 다시 재생
-	// setTimeout(()=>{
-	// 	if(videoElement){
-	// 		setVideoSrc('https://ak.picdn.net/shutterstock/videos/1065170830/preview/stock-footage-nature-river-waterfall-forest-sun-morning-magical.webm')
-	// 		videoElement.load()
-	// 		videoElement.play()
-	// 	}
-	// },10000)
 
 	useEffect(() => {
 		addTimeUpdate();
@@ -82,25 +77,40 @@ const Home = () => {
 		}
 	};
 
-	const changeVideo = ()=>{
-		
-	}
+	const addAd = () => {
+		if (videoElement) {
+			if (Math.floor(videoElement.currentTime) === 5 && !ad) {
+				setPausedTime(videoElement.currentTime);
+				videoElement.pause();
+				setAd(true);
+			}if(videoElement?.ended){
+				setSrc(`${VideoSrc}#t=${pausedTime}`);
+				videoElement.load();
+				videoElement.play();
+				// setPausedTime(0)
+			}
+		}
+	};
+
+	useEffect(() => {
+		if (ad && videoElement) {
+			setSrc(AdVideoSrc);
+			videoElement.load();
+			videoElement.play();
+		}
+	}, [ad, videoElement]);
 
 	return (
 		<Container isFullScreen={fullScreen}>
 			<Position onMouseMove={handleControlVisible}>
 				<video
-					loop={true}
 					muted={true}
 					ref={ref}
-					playsInline={true}
 					tabIndex={0}
 					onKeyDown={handleKeyPress}
+					onTimeUpdate={addAd}
 				>
-					<source
-						src={VideoSrc}
-						type="video/mp4"
-					/>
+					<source src={src} type="video/mp4" />
 				</video>
 				<ContorlBox
 					onProgressChange={onProgressChange}
@@ -138,3 +148,8 @@ const Container = styled.main<{ isFullScreen: boolean }>`
 const Position = styled.div`
 	position: relative;
 `;
+
+const VideoSrc =
+	'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+const AdVideoSrc =
+	'https://ak.picdn.net/shutterstock/videos/1065170830/preview/stock-footage-nature-river-waterfall-forest-sun-morning-magical.webm';
